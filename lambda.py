@@ -1,7 +1,8 @@
-# env. with only single argumented functions
-# no numbers, no strings, no operators etc.
+# Python universe with only single argumented functions
+#
+# It's illegal to have numbers, strings, operators, control flow etc.
 # PyCon 2019 Tutorial https://www.youtube.com/watch?v=5C6sv7-eTKg
-# What can you build?
+# But, what can you build with it?
 
 # Switch
 def LEFT(a):
@@ -17,11 +18,11 @@ def RIGHT(a):
 assert LEFT('v5')('gnd') == 'v5'
 assert RIGHT('v5')('gnd') == 'gnd'
 
-# The truth
-# lambda = function with parameter(s) e.g. lambda x: x -> create a function with x as param and return x
+# lambda = function with parameter(s) e.g. lambda x: x -> creates a function with x as param and returns x
 incr = lambda x: x + 1
 assert incr(41) == 42
 
+# The truth
 def TRUE(x):
     return lambda y: x # return the first argument
 
