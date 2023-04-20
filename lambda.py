@@ -43,7 +43,7 @@ def NOT(x):
 # NOT(TRUE) is FALSE because TRUE always returns the first argument
 # it gets executed as -> TRUE(FALSE)(TRUE)
 assert NOT(TRUE) is FALSE
-# NOT(FALSE) is the oposit and gets executed as FALSE(FALSE)(TRUE) which is true,
+# NOT(FALSE) is the opposite and gets executed as FALSE(FALSE)(TRUE) which is true,
 # because FALSE returns the second argument
 assert NOT(FALSE) is TRUE
 
