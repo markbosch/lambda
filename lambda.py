@@ -126,7 +126,7 @@ assert MUL(FOUR)(THREE)(incr)(0) == 12
 # define functions for representing a simple data structure (pair)
 # In LISP
 #
-# cons is a pair datastructure
+# cons is a pair (tuple) datastructure
 # car will select the first
 # cdr will select the second
 # (cons 2 3)     -> (2, 3)
@@ -169,24 +169,28 @@ CONS(2)(CONS(3)(4))
 # Can you subtract? the reverse
 # THREE, how to get TWO?
 
-# tuple
+# tuple with + 1
 # (0, 0)
 # (1, 0)
 # (2, 1)
 # (3, 2)
 # (n + 1, n)
 def t(p):
-    return (p[0]+1, p[0])
+    return (p[0]+1, p[0]) # Is illegal, because of the + 1
 
 THREE(t)((0,0))
 
+# Lambda version of t
 # p[0] = CAR... the first / left one
-T = lambda p: CONS(SUCC(CAR(p)))(CAR(p))
+# T = you have a pair, make a CONS and apply SUCC (is next value) on CAR (left value) of p
+# which results in CAR + 1 and apply CAR again for the other value of the pair
+# input (0, 0) -> output (1, 0)  
+T = lambda p: CONS(SUCC(CAR(p)))(CAR(p)) 
 
 assert CAR(FOUR(T)(CONS(ZERO)(ZERO)))(incr)(0) == 4
 a = FOUR(T)(CONS(ZERO)(ZERO))
 assert CAR(a)(incr)(0) == 4
-assert CDR(a)(incr)(0) == 3 # reverse... Hmm figure this one out
+assert CDR(a)(incr)(0) == 3 # reverse
 
 # Predecessor
 # count from 0 -> to x and then take the predecessor from pairs
