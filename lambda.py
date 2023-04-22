@@ -21,9 +21,25 @@ def RIGHT(a):
 assert LEFT('v5')('gnd') == 'v5'
 assert RIGHT('v5')('gnd') == 'gnd'
 
+# Function definitions
+# def AND(x):
+#   def f(y):
+#       return x(y)(x)
+#   return f
+#
+# shorter with lambda
+# def AND(x):
+#     return lambda y: x(y)(x)
+#
+# Even shorter
+# AND = lambda x: lambda y: x(y)(x) # or
+# AND = lambda xy: x(y)(x) # although illegal, two argumented function
+# AND = lambda: xy:xyx
+# AND = lamdba: xy.xyx # :'D
+
 # lambda = function with parameter(s) e.g. lambda x: x -> creates a function with x as param and returns x
-incr = lambda x: x + 1
-assert incr(41) == 42
+#incr = lambda x: x + 1
+#assert incr(41) == 42
 
 # The truth
 def TRUE(x):
@@ -97,6 +113,7 @@ SUCC = lambda n: (lambda f: lambda x: f(n(f)(x)))
 assert SUCC(FOUR)(incr)(0) == 5 # successor of 4 -> 5
 assert SUCC(SUCC(FOUR))(incr)(0) == 6
 
+# Arithmetic
 # Add
 ADD = lambda x: lambda y: y(SUCC)(x) # Take SUCC and apply it times the other
 assert ADD(FOUR)(THREE)(incr)(0) == 7
@@ -104,3 +121,80 @@ assert ADD(FOUR)(THREE)(incr)(0) == 7
 # Multi
 MUL = lambda x: lambda y: lambda f: y(x(f)) # Execute y times the function with x
 assert MUL(FOUR)(THREE)(incr)(0) == 12
+
+# Data (structures)
+# define functions for representing a simple data structure (pair)
+# In LISP
+#
+# cons is a pair datastructure
+# car will select the first
+# cdr will select the second
+# (cons 2 3)     -> (2, 3)
+# (car p)        -> 2
+# (cdr p)        -> 3
+# car and cdr come from the IMB 704
+
+# Illegal in the single arg. universe
+def cons(a, b):
+    def select(m):
+        if m == 0:
+            return a
+        elif m == 1:
+            return b
+    return select
+
+p = cons(2, 3)
+p
+p(0)
+p(1)
+
+def car(p):
+    return p(0)
+
+def cdr(p):
+    return p(1)
+
+# These are not illegal!
+CONS = lambda a: lambda b: lambda s: s(a)(b) # s -> select left or right
+CAR = lambda p: p(TRUE)  # TRUE selects the first one
+CDR = lambda p: p(FALSE) # FALSE selects the second one
+
+assert CONS(2)(3)(TRUE) == 2
+assert CAR(CONS(2)(3)) == 2
+assert CDR(CONS(2)(3)) == 3
+
+# Linked list
+CONS(2)(CONS(3)(4))
+
+# Can you subtract? the reverse
+# THREE, how to get TWO?
+
+# tuple
+# (0, 0)
+# (1, 0)
+# (2, 1)
+# (3, 2)
+# (n + 1, n)
+def t(p):
+    return (p[0]+1, p[0])
+
+THREE(t)((0,0))
+
+# p[0] = CAR... the first / left one
+T = lambda p: CONS(SUCC(CAR(p)))(CAR(p))
+
+assert CAR(FOUR(T)(CONS(ZERO)(ZERO)))(incr)(0) == 4
+a = FOUR(T)(CONS(ZERO)(ZERO))
+assert CAR(a)(incr)(0) == 4
+assert CDR(a)(incr)(0) == 3 # reverse... Hmm figure this one out
+
+# Predecessor
+# count from 0 -> to x and then take the predecessor from pairs
+PRED = lambda n: CDR(n(T)(CONS(ZERO)(ZERO)))
+a = FOUR(THREE) # = 81 -> 3^4 -> 3 * 3 * 3 * 3
+b = PRED(a) # (0, 0) (1, 0) (2, 1) ... etc (81, 80)
+assert b(incr)(0) == 80
+
+# Substract
+SUB = lambda x: lambda y: y(PRED)(x)
+assert SUB(FOUR)(TWO)(incr)(0) == 2
