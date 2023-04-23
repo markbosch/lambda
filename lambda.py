@@ -202,3 +202,41 @@ assert b(incr)(0) == 80
 # Substract
 SUB = lambda x: lambda y: y(PRED)(x)
 assert SUB(FOUR)(TWO)(incr)(0) == 2
+
+# Test a number for zero
+# ZERO doesn't execute a function, therefor TRUE will be returned
+# for all other numbers fALSE will be executed
+ISZERO = lambda n: n(lambda f: FALSE)(TRUE)
+ISZERO(ZERO) # returns TRUE function
+ISZERO(ONE) # returns FALSE
+
+# The assembly
+
+# Recursion
+
+# Factorial
+def fact(n):
+    if n == 0:
+        return 1
+    else:
+        return n*fact(n-1)
+
+assert fact(4) == 24 # Illegal
+
+# Need a 'lazy' evaluation because both branches of ISZERO are
+# getting evaluated which gives a max depth recursion error.
+
+#FACT = lambda n: ISZERO(n)\
+#                 (ONE)\
+#                 (MUL(n)(FACT(PRED(n))))
+
+
+LAZY_TRUE = lambda x: lambda y: x()
+LAZY_FALSE = lambda x: lambda y: y()
+ISZERO = lambda n: n(lambda f: LAZY_FALSE)(LAZY_TRUE)
+
+FACT = lambda n: ISZERO(n)\
+                 (lambda: ONE)\
+                 (lambda: MUL(n)(FACT(PRED(n))))
+
+assert FACT(THREE)(incr)(0) == 6
