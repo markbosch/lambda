@@ -35,7 +35,7 @@ assert RIGHT('v5')('gnd') == 'gnd'
 # AND = lambda x: lambda y: x(y)(x) # or
 # AND = lambda xy: x(y)(x) # although illegal, two argumented function
 # AND = lambda: xy:xyx
-# AND = lamdba: xy.xyx # :'D
+# AND = lambda: xy.xyx # :'D
 
 # lambda = function with parameter(s) e.g. lambda x: x -> creates a function with x as param and returns x
 #incr = lambda x: x + 1
@@ -238,5 +238,17 @@ ISZERO = lambda n: n(lambda f: LAZY_FALSE)(LAZY_TRUE)
 FACT = lambda n: ISZERO(n)\
                  (lambda: ONE)\
                  (lambda: MUL(n)(FACT(PRED(n))))
-
+#                                ^^^^ Illegal
 assert FACT(THREE)(incr)(0) == 6
+
+# The anonymous
+# How does recurion work when no variables are allowed?
+# In lambda calculus this not allowed. No globals, no assignment...
+
+fact = lambda n: 1 if n == 0 else n*fact(n-1) # Illegal
+#                                   ^^^^ NO!
+# How to rewrite
+fact = (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1))\
+       (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1)) # DRY :'D, paste yourself in there
+#                     two arg. function + number  f^ n^^
+
