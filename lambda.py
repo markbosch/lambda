@@ -252,3 +252,45 @@ fact = (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1))\
        (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1)) # DRY :'D, paste yourself in there
 #                     two arg. function + number  f^ n^^
 
+print(
+    (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1))\
+    (lambda f: lambda n: 1 if n == 0 else n *f(f)(n-1))(5))
+
+# Take out the middle
+R = (lambda f: lambda n: 1 if n == 0 else n*f(n-1))
+
+# fact must be a fixed point of R.
+# fixed point = you get back what you put in
+# e.g. 1 = sqrt(1)
+# factorial = R(factorial)
+# print(fact(5))
+
+# Suppose that there's a function Y that computes
+# the fixed point of R.
+#
+# Y(R) -> Fixed point of R (whatever it is)
+#
+# Y(R) = R(Y(R))
+#
+# Recursion trick:
+#
+# Y(R) = (lambda x: R(x))(Y(R))  # can't be done, because Y(R) -> Nothing
+# Y(R) = (lambda x: R(x))(lambda x: R(x))   # repeat yourself trick, but does not work. you need the function trick
+# Y(R) = (lambda x: R(x(x))(lambda x: R(x(x)))
+# Y(R) = (lambda f: (lambda x: f(x(x)))(lambda x: f(x(x))))(R) # Formula, but R on both sides
+
+Y = lambda f: (lambda x: f(x(x)))(lambda x: f(x(x)))  # drop the R on both sides
+
+# The Y combinator -> Haskell B Curry
+R = (lambda f: lambda n: 1 if n == 0 else n*f(n-1))  # the middle part
+#Y = lambda f: (lambda x: f(x(x)))(lambda x: f(x(x))) # abstraction of recursion with functions, but gives a max recursion depth error, because of python eager arg evaluation
+Y = lambda f: (lambda x: f(lambda z: x(x)(z)))(lambda x: f(lambda z: x(x)(z))) # solution is to provide a 'extra' argument z and pass it through like a decorator (wrap the function)
+
+fact = Y(R)
+print(fact(6))
+
+# Now we've a abstraction of recursion Y, lets calculate fib
+R1 = lambda f: lambda n: 1 if n <= 2 else f(n-1) + f(n-2)
+fib = Y(R1)
+
+print(fib(10))
