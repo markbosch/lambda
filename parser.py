@@ -78,3 +78,26 @@ assert digits('bar') == False
 # digits = fmap(''.join)(one_or_more(digit))
 # digits('456') == ('456', '')
 
+# Sequencing operator
+# multiple parsers as input which all needs to succeed
+# for a successful parse
+def seq(*parsers):
+    def parse(inp):
+        result = [ ]
+        for p in parsers:
+            if not (m:=p(inp)):
+                return False
+            value, inp = m
+            result.append(value)
+        return (result, inp)
+    return parse
+
+assert seq(letter, digit, letter)('a4x') == (['a', '4', 'x'], '')
+assert seq(letter, digit, letter)('bar') == False
+assert seq(letter, fmap(''.join)(one_or_more(digit)))('x12345') == (['x', '12345'], '')
+
+left = lambda p1, p2: fmap(lambda p: p[0])(seq(p1, p2))
+right = lambda p1, p2: fmap(lambda p: p[1])(seq(p1, p2))
+
+assert left(letter, digit)('a4') == ('a', '')
+assert right(letter, digit)('a4') == ('4', '')
