@@ -144,3 +144,25 @@ assert number('12.3') == (12.3, '')
 assert number('.123') == (0.123, '')
 assert number('123.') == (123.0, '')
 assert number('.foo') == False
+
+# Key-value pairs
+
+letter = filt(str.isalpha)(shift)
+letters = fmap(''.join)(one_or_more(letter))
+ws = zero_or_more(filt(str.isspace)(shift))
+token = lambda p: right(ws, p)
+eq = token(char('='))
+semi = token(char(';'))
+name = token(letters)
+value = token(number)
+keyvalue = seq(left(name, eq), left(value, semi))
+
+assert keyvalue('xyz=123;') == (['xyz', 123], '')
+assert keyvalue('    pi = 3.14   ;') == (['pi', 3.14], '')
+
+# Dictionary
+
+keyvalues = fmap(dict)(zero_or_more(keyvalue))
+
+assert keyvalues('x=2; y=3.4; z=.789;') == ({'x': 2, 'y': 3.4, 'z': 0.789}, '')
+assert keyvalues('') == ({}, '')
