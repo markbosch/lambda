@@ -101,3 +101,46 @@ right = lambda p1, p2: fmap(lambda p: p[1])(seq(p1, p2))
 
 assert left(letter, digit)('a4') == ('a', '')
 assert right(letter, digit)('a4') == ('4', '')
+
+# Choice
+
+either = lambda p1, p2: (lambda inp: p1(inp) or p2(inp))
+alnum = either(letter, digit)
+assert alnum('4a') == ('4', 'a')
+assert alnum('a4') == ('a', '4')
+assert alnum('$4') == False
+
+maybe = lambda parser: either(parser, nothing)
+assert maybe(digit)('456') == ('4', '56')
+assert maybe(digit)('abc') == (None, 'abc')
+
+zero_or_more = lambda parser: either(one_or_more(parser), seq())
+assert zero_or_more(digit)('456') == (['4', '5', '6'], '')
+assert zero_or_more(digit)('abc') == ([], 'abc')
+
+choice = lambda parser, *parsers: (
+            either(parser, choice(*parsers)) if parsers else parser)
+
+# Numbers
+#
+# Integers or Decimals
+# Decimals: 12.34, 12., or .34
+
+dot = char('.')
+digit = filt(str.isdigit)(shift)
+digits = fmap(''.join)(one_or_more(digit))
+decdigits = fmap(''.join)(choice(
+               seq(digits, dot, digits),
+               seq(digits, dot),
+               seq(dot, digits)))
+
+integer = fmap(int)(digits)
+decimal = fmap(float)(decdigits)
+number = choice(decimal, integer)
+
+# Let's try it out
+assert number('1234') == (1234, '')
+assert number('12.3') == (12.3, '')
+assert number('.123') == (0.123, '')
+assert number('123.') == (123.0, '')
+assert number('.foo') == False
